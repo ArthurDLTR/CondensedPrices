@@ -63,13 +63,17 @@ require_once 'lib/condensedprices.lib.php';
 $langs->loadLangs(array("condensedprices@condensedprices"));
 
 $action = GETPOST('action', 'aZ09');
+// Page is only visible for users who can create and modify products
+if ($user->hasRight('produit', 'creer')){
 
-llxHeader("", $langs->trans("CondensedPricesArea"), '', '', 0, 0, '', '', '', 'mod-condensedprices page-index');
+    /* Content of the page */
+    llxHeader("", $langs->trans("CondensedPricesArea"), '', '', 0, 0, '', '', '', 'mod-condensedprices page-index');
 
-print load_fiche_titre($langs->trans("CondensedPricesArea"), '', 'condensedprices.png@condensedprices');
+    print load_fiche_titre($langs->trans("CondensedPricesArea"), '', 'condensedprices.png@condensedprices');
 
-$head = condensedprices_prepare_head();
+    $head = condensedprices_prepare_head();
 
-dol_fiche_head($head, $active=0);
+    dol_fiche_head($head, $active=0);
 
-print 'Page prix de vente';
+    print 'Page prix de vente';
+}
