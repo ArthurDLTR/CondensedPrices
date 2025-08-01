@@ -79,19 +79,13 @@ if ($user->hasRight('produit', 'creer')){
         $supplierSocid = '';
     }
     
-    // Variables to define the limits of the request and the number of rows printed
-    $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-    $page = GETPOSTINT('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-    
-    
-    
     // SQL request
     
     if ($supplierSocid == ''){
         $sql = '';
         $num = 0;
     } else {
-        $sql = 'SELECT fk_product as prod_id from llx_product_fournisseur_price as pfp WHERE fk_soc = '.$supplierSocid;
+        $sql = 'SELECT fk_product as prod_id from '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE fk_soc = '.$supplierSocid;
         $resql = $db->query($sql);
     
         $num = $db->num_rows($resql);
@@ -117,7 +111,7 @@ if ($user->hasRight('produit', 'creer')){
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
     // Box to choose a thirdparty to copy the price list
-	print $langs->trans('ThirdParty').' '.img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($supplierSocid, 'supplierSocid', '((s.fournisseur:=:1) AND (s.status:=:1))', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth300 widthcentpercentminusxx');
+	print $langs->trans('Supplier').' '.img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($supplierSocid, 'supplierSocid', '((s.fournisseur:=:1) AND (s.status:=:1))', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth300 widthcentpercentminusxx');
 	print '<input type="submit" class="button buttonform small" value="'.$langs->trans("UPDATE").'">';
 	print '<br>';
 
@@ -153,7 +147,7 @@ if ($user->hasRight('produit', 'creer')){
 
         print '<tr class="oddeven">';
         print '<td class="nowrap">'.$prod->getNomUrl(1).'</td>';
-        print '<td class="maxwidth100">'.$prod->label.'</td>';
+        print '<td class="maxwidth200">'.$prod->label.'</td>';
         print '<td class="nowrap">'.$soc->getNomUrl(1).'</td>';
         print '<td class="nowrap">'.$prodFourn->fourn_ref.'</td>';
         print '<td class="nowrap">'.$prodFourn->fourn_qty.'</td>';
@@ -174,6 +168,9 @@ if ($user->hasRight('produit', 'creer')){
 
     print '</table>';
 
+    if ($num == 0){
+        print $langs->trans('ChooseSupplierPls');
+    }
 
 
     print '</div>';
