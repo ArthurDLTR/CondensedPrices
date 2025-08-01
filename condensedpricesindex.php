@@ -57,6 +57,7 @@ if (!$res) {
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once 'lib/condensedprices.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("condensedprices@condensedprices"));
@@ -106,7 +107,9 @@ llxHeader("", $langs->trans("CondensedPricesArea"), '', '', 0, 0, '', '', '', 'm
 
 print load_fiche_titre($langs->trans("CondensedPricesArea"), '', 'condensedprices.png@condensedprices');
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+$head = condensedprices_prepare_head();
+
+dol_fiche_head($head);
 
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT

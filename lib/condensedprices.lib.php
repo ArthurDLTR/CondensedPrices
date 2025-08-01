@@ -74,3 +74,25 @@ function condensedpricesAdminPrepareHead()
 
 	return $head;
 }
+
+function condensedprices_prepare_head()
+{
+	global $langs, $conf;
+
+	$langs->load("condensedprices@condensedprices");
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = dol_buildpath("/condensedprices/salepricestab.php", 1);
+	$head[$h][1] = $langs->trans("SalePricesTab");
+	$head[$h][2] = 0;
+	$h++;
+
+	$head[$h][0] = dol_buildpath("/condensedprices/buypricestab.php", 1);
+	$head[$h][1] = $langs->trans("BuyPricesTab");
+	$head[$h][2] = 1;
+	$h++;
+
+	return $head;
+}

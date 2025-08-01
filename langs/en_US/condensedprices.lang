@@ -20,7 +20,7 @@
 # Module label 'ModuleCondensedPricesName'
 ModuleCondensedPricesName = CondensedPrices
 # Module description 'ModuleCondensedPricesDesc'
-ModuleCondensedPricesDesc = CondensedPrices description
+ModuleCondensedPricesDesc = Module to edit massively buy and sale prices
 
 #
 # Admin page

@@ -1,0 +1,54 @@
+# Copyright (C) 2025 Atu SuperAdmin <arthurl52100@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleCondensedPricesName'
+ModuleCondensedPricesName = CondensedPrices
+# Module description 'ModuleCondensedPricesDesc'
+ModuleCondensedPricesDesc = Module de modification en masse des prix d'achat et de vente
+
+#
+# Admin page
+#
+CondensedPricesSetup = Paramètres de CondensedPrices 
+Settings = Paramètres
+CondensedPricesSetupPage = Page de paramétrage de CondensedPrices
+CONDENSEDPRICES_MYPARAM1 = My param 1
+CONDENSEDPRICES_MYPARAM1Tooltip = My param 1 tooltip
+CONDENSEDPRICES_MYPARAM2=My param 2
+CONDENSEDPRICES_MYPARAM2Tooltip=My param 2 tooltip
+
+
+#
+# About page
+#
+About = A propos
+CondensedPricesAbout = A propos de CondensedPrices
+CondensedPricesAboutPage = Page de détails de CondensedPrices
+
+#
+# Sample page
+#
+CondensedPricesArea = Home CondensedPrices
+MyPageName = My page name
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description

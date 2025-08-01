@@ -52,7 +52,7 @@ class modCondensedPrices extends DolibarrModules
 
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
-		$this->family = "other";
+		$this->family = "Atu home made";
 
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
 		$this->module_position = '90';
@@ -175,7 +175,8 @@ class modCondensedPrices extends DolibarrModules
 		}
 
 		// Array to add new pages in new tabs
-		$this->tabs = array();
+		$this->tabs = array('data'=>'condensedprices:+saleprices:'.$langs->trans('SalePrices').':condensedprices@condensedprices:0:/condensedprices/salepricestab.php');
+		$this->tabs = array('data'=>'condensedprices:+buyprices:'.$langs->trans('BuyingPrices').':condensedprices@condensedprices:0:/condensedprices/buypricestab.php');
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@condensedprices:$user->hasRight('condensedprices', 'read'):/condensedprices/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@condensedprices:$user->hasRight('othermodule', 'read'):/condensedprices/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
@@ -301,12 +302,12 @@ class modCondensedPrices extends DolibarrModules
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
 		$this->menu[$r++] = array(
-			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'top', // This is a Top menu entry
+			'fk_menu'=>'fk_mainmenu=products', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type'=>'left', // This is a Top menu entry
 			'titre'=>'ModuleCondensedPricesName',
 			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle"'),
-			'mainmenu'=>'condensedprices',
-			'leftmenu'=>'',
+			'mainmenu'=>'products',
+			'leftmenu'=>'condensedprices',
 			'url'=>'/condensedprices/condensedpricesindex.php',
 			'langs'=>'condensedprices@condensedprices', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
