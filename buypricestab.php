@@ -114,7 +114,7 @@ if ($user->hasRight('produit', 'creer')){
                 } else {
                     $newdiscount = 0;
                 }
-                print 'nouveau prix : '.$newprice.' et nouvelle remise : '.$newdiscount.'<br>';
+                // print 'nouveau prix : '.$newprice.' et nouvelle remise : '.$newdiscount.'<br>';
                 $prodFourn->fetch($obj->prod_id);
                 $prodFourn->fetch_product_fournisseur_price($obj->pfp_id);
                 $soc->fetch($supplierSocid);
