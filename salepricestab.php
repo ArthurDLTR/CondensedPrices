@@ -104,7 +104,7 @@ if ($user->hasRight('produit', 'creer')){
 
     $head = condensedprices_prepare_head();
 
-    dol_fiche_head($head, $active=0);
+    dol_fiche_head($head, $active=1);
 
     /* Filters */
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

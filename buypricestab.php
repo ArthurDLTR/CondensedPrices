@@ -91,25 +91,37 @@ if ($user->hasRight('produit', 'creer')){
     
         $num = $db->num_rows($resql);
     }
+    
+    $soc = new Societe($db);
+    $prodFourn = new ProductFournisseur($db);
+    $prodFournPrice = new ProductFournisseurPrice($db);
+    $prod = new Product($db);
 
     // If the button to update the prices is pressed
     if (GETPOSTISSET('updateBtn', 'bool')){
+        $price_base_type = GETPOST('price_base_type', 'alpha');
         $i = 0;
         while ($i < $num){
             $obj = $db->fetch_object($resql);
             if (GETPOST('newprice-'.$obj->pfp_id, 'intcomma')){
-                print 'nouveau prix : '.GETPOST('newprice-'.$obj->pfp_id, 'intcomma').' et nouvelle remise : '.GETPOST('newdiscount-'.$obj->pfp_id, 'intcomma').'<br>';
+                $newprice = GETPOST('newprice-'.$obj->pfp_id, 'intcomma');
+                if (GETPOST('newdiscount-'.$obj->pfp_id, 'intcomma')){
+                    $newdiscount = GETPOST('newdiscount-'.$obj->pfp_id, 'intcomma');
+                } else {
+                    $newdiscount = 0;
+                }
+                // print 'nouveau prix : '.$newprice.' et nouvelle remise : '.$newdiscount.'<br>';
+                $prodFourn->fetch($obj->prod_id);
+                $prodFourn->find_min_price_product_fournisseur($obj->prod_id);
+                $prodFourn->fetch_product_fournisseur_price($prodFourn->product_fourn_price_id);
+                $soc->fetch($supplierSocid);
+                $res = $prodFourn->update_buyprice($obj->min_qty, $newprice, $user, $price_base_type, $soc, '', $obj->ref_fourn, $obj->tva, 0, $newdiscount);
             }
             $i++;
         }
         $db->free($sql);
         $resql = $db->query($sql);
     }
-
-    $soc = new Societe($db);
-    $prodFourn = new ProductFournisseur($db);
-    $prodFournPrice = new ProductFournisseurPrice($db);
-    $prod = new Product($db);
 
     /* Content of the page */
 
@@ -119,7 +131,7 @@ if ($user->hasRight('produit', 'creer')){
 
     $head = condensedprices_prepare_head();
 
-    dol_fiche_head($head, $active = 1);
+    dol_fiche_head($head, $active = 0);
     
     // Form to get and update the prices with the inputs values 
     print '<form id="updateprices" name="updateprices" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -147,8 +159,8 @@ if ($user->hasRight('produit', 'creer')){
     print '<th>'.$langs->trans('Discount').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('SellingPrice').' '.$langs->trans('HT').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('SellingPrice').' '.$langs->trans('TTC').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
-    print '<th class="maxwidth50">'.$langs->trans('NewBuyingPrice').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
-    print '<th class="maxwidth50">'.$langs->trans('NewDiscount').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
+    print '<th>'.$langs->trans('NewBuyingPrice').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
+    print '<th>'.$langs->trans('NewDiscount').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '</tr>';
 
     $i = 0;
@@ -185,8 +197,15 @@ if ($user->hasRight('produit', 'creer')){
 
     print '</table>';
 
-    // Button to update the prices
     print '<div class="tabsAction">';
+    // Radio buttons to choose between HT and TTC
+    print '<input type="radio" id="HT" name="price_base_type" checked value="HT">';
+    print '<label for="HT">'.$langs->trans('HT').'</label>';
+    print '<input type="radio" nameid="TTC" name="price_base_type" value="TTC">';
+    print '<label for="TTC">'.$langs->trans('TTC').'</label>';
+    print '<br>';
+
+    // Button to update the prices
     print '<input type="submit" name="updateBtn" class="butAction" value="'.$langs->trans("UpdatePrices").'"> ';
     print '</div>';
 

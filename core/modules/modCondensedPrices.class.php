@@ -175,8 +175,8 @@ class modCondensedPrices extends DolibarrModules
 		}
 
 		// Array to add new pages in new tabs
-		$this->tabs = array('data'=>'condensedprices:+saleprices:'.$langs->trans('SalePrices').':condensedprices@condensedprices:0:/condensedprices/salepricestab.php');
-		$this->tabs = array('data'=>'condensedprices:+buyprices:'.$langs->trans('BuyingPrices').':condensedprices@condensedprices:0:/condensedprices/buypricestab.php');
+		// $this->tabs = array('data'=>'condensedprices:+saleprices:'.$langs->trans('SalePrices').':condensedprices@condensedprices:0:/condensedprices/salepricestab.php');
+		// $this->tabs = array('data'=>'condensedprices:+buyprices:'.$langs->trans('BuyingPrices').':condensedprices@condensedprices:0:/condensedprices/buypricestab.php');
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@condensedprices:$user->hasRight('condensedprices', 'read'):/condensedprices/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@condensedprices:$user->hasRight('othermodule', 'read'):/condensedprices/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
@@ -308,7 +308,7 @@ class modCondensedPrices extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle"'),
 			'mainmenu'=>'products',
 			'leftmenu'=>'condensedprices',
-			'url'=>'/condensedprices/condensedpricesindex.php',
+			'url'=>'/condensedprices/buypricestab.php',
 			'langs'=>'condensedprices@condensedprices', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'isModEnabled("condensedprices")', // Define condition to show or hide menu entry. Use 'isModEnabled("condensedprices")' if entry must be visible if module is enabled.

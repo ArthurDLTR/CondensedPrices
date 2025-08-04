@@ -18,7 +18,7 @@
 #
 
 # Module label 'ModuleCondensedPricesName'
-ModuleCondensedPricesName = CondensedPrices
+ModuleCondensedPricesName = Modification de prix rapide
 # Module description 'ModuleCondensedPricesDesc'
 ModuleCondensedPricesDesc = Module de modification en masse des prix d'achat et de vente
 
