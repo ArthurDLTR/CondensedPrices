@@ -62,6 +62,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("condensedprices@condensedprices"));
@@ -85,15 +86,29 @@ if ($user->hasRight('produit', 'creer')){
         $sql = '';
         $num = 0;
     } else {
-        $sql = 'SELECT fk_product as prod_id from '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE fk_soc = '.$supplierSocid;
+        $sql = 'SELECT pfp.fk_product as prod_id, pfp.rowid as pfp_id, pfp.ref_fourn as ref_fourn, pfp.quantity as min_qty, pfp.unitprice as pu, pfp.tva_tx as tva, pfp.remise_percent as remise from '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE pfp.fk_soc = '.$supplierSocid.' ORDER BY pfp.ref_fourn';
         $resql = $db->query($sql);
     
         $num = $db->num_rows($resql);
     }
 
+    // If the button to update the prices is pressed
+    if (GETPOSTISSET('updateBtn', 'bool')){
+        $i = 0;
+        while ($i < $num){
+            $obj = $db->fetch_object($resql);
+            if (GETPOST('newprice-'.$obj->pfp_id, 'intcomma')){
+                print 'nouveau prix : '.GETPOST('newprice-'.$obj->pfp_id, 'intcomma').' et nouvelle remise : '.GETPOST('newdiscount-'.$obj->pfp_id, 'intcomma').'<br>';
+            }
+            $i++;
+        }
+        $db->free($sql);
+        $resql = $db->query($sql);
+    }
 
     $soc = new Societe($db);
     $prodFourn = new ProductFournisseur($db);
+    $prodFournPrice = new ProductFournisseurPrice($db);
     $prod = new Product($db);
 
     /* Content of the page */
@@ -105,17 +120,18 @@ if ($user->hasRight('produit', 'creer')){
     $head = condensedprices_prepare_head();
 
     dol_fiche_head($head, $active = 1);
-
-    /* Filters */
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    
+    // Form to get and update the prices with the inputs values 
+    print '<form id="updateprices" name="updateprices" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-
+    
+    /* Filters */
     // Box to choose a thirdparty to copy the price list
 	print $langs->trans('Supplier').' '.img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($supplierSocid, 'supplierSocid', '((s.fournisseur:=:1) AND (s.status:=:1))', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth300 widthcentpercentminusxx');
 	print '<input type="submit" class="button buttonform small" value="'.$langs->trans("UPDATE").'">';
 	print '<br>';
 
-    print '</form>';
+    // print '</form>';
     print '<br>';
 
     // List of the editable products
@@ -131,8 +147,8 @@ if ($user->hasRight('produit', 'creer')){
     print '<th>'.$langs->trans('Discount').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('SellingPrice').' '.$langs->trans('HT').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('SellingPrice').' '.$langs->trans('TTC').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
-    print '<th>'.$langs->trans('NewBuyingPrice').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
-    print '<th>'.$langs->trans('NewDiscount').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
+    print '<th class="maxwidth50">'.$langs->trans('NewBuyingPrice').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
+    print '<th class="maxwidth50">'.$langs->trans('NewDiscount').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '</tr>';
 
     $i = 0;
@@ -142,22 +158,23 @@ if ($user->hasRight('produit', 'creer')){
         $prodFourn->fetch($obj->prod_id);
         $prodFourn->find_min_price_product_fournisseur($obj->prod_id);
         $prodFourn->fetch_product_fournisseur_price($prodFourn->product_fourn_price_id);
+        $prodFournPrice->fetch($obj->pfp_id);
         $soc->fetch($supplierSocid);
 
 
         print '<tr class="oddeven">';
         print '<td class="nowrap">'.$prod->getNomUrl(1).'</td>';
-        print '<td class="maxwidth200">'.$prod->label.'</td>';
+        print '<td class="maxwidth100">'.$prod->label.'</td>';
         print '<td class="nowrap">'.$soc->getNomUrl(1).'</td>';
-        print '<td class="nowrap">'.$prodFourn->fourn_ref.'</td>';
-        print '<td class="nowrap">'.$prodFourn->fourn_qty.'</td>';
-        print '<td class="nowrap">'.price2num($prodFourn->fourn_price).'</td>';
-        print '<td class="nowrap">'.price2num($prodFourn->fourn_tva_tx).'</td>';
-        print '<td class="nowrap">'.price2num($prodFourn->fourn_unitprice_with_discount).'</td>';
+        print '<td class="nowrap">'.$obj->ref_fourn.'</td>';
+        print '<td class="nowrap">'.$obj->min_qty.'</td>';
+        print '<td class="nowrap">'.price2num($obj->pu).'</td>';
+        print '<td class="nowrap">'.price2num($obj->pu * (1 + $obj->tva / 100)).'</td>';
+        print '<td class="nowrap">'.price2num($obj->remise).' %</td>';
         print '<td class="nowrap">'.price2num($prod->price).'</td>';
         print '<td class="nowrap">'.price2num($prod->price_ttc).'</td>';
-        print '<td><input type"text" id="newprice" name="newprice" value=""></td>';
-        print '<td><input type"text" id="new_discount" name="new_discount" value=""></td>';
+        print '<td class="nowrap"><input type="text" id="newprice" name="newprice-'.$prodFourn->product_fourn_price_id.'" value=""></td>';
+        print '<td class="nowrap"><input type="text" id="new_discount" name="newdiscount-'.$prodFourn->product_fourn_price_id.'" value=""></td>';
 	
 
 
@@ -168,6 +185,13 @@ if ($user->hasRight('produit', 'creer')){
 
     print '</table>';
 
+    // Button to update the prices
+    print '<div class="tabsAction">';
+    print '<input type="submit" name="updateBtn" class="butAction" value="'.$langs->trans("UpdatePrices").'"> ';
+    print '</div>';
+
+    print '</form>';
+
     if ($num == 0){
         print $langs->trans('ChooseSupplierPls');
     }
@@ -175,3 +199,6 @@ if ($user->hasRight('produit', 'creer')){
 
     print '</div>';
 }
+
+llxFooter();
+$db->close();

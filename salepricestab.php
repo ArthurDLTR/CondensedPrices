@@ -115,8 +115,11 @@ if ($user->hasRight('produit', 'creer')){
 	print '<input type="submit" class="button buttonform small" value="'.$langs->trans("UPDATE").'">';
 	print '<br>';
 
-    print '</form>';
+    // print '</form>';
     print '<br>';
+
+    // // Form to get the values in the input areas and update the buy prices
+    // print '<form name="updateprices" id="updateprices" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 
     // List of the editable products
     print '<table class="noborder centepercent">';
@@ -165,7 +168,7 @@ if ($user->hasRight('produit', 'creer')){
     }    
 
     print '</table>';
-
+    print '</form>';
 
     if ($num == 0){
         print $langs->trans('ChooseCustomerPls');
