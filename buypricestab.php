@@ -86,7 +86,10 @@ if ($user->hasRight('produit', 'creer')){
         $sql = '';
         $num = 0;
     } else {
-        $sql = 'SELECT pfp.fk_product as prod_id, pfp.rowid as pfp_id, pfp.ref_fourn as ref_fourn, pfp.quantity as min_qty, pfp.unitprice as pu, pfp.tva_tx as tva, pfp.remise_percent as remise from '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE pfp.fk_soc = '.$supplierSocid.' ORDER BY pfp.ref_fourn';
+        $sql = 'SELECT pfp.fk_product as prod_id, pfp.rowid as pfp_id, pfp.ref_fourn as ref_fourn, pfp.quantity as min_qty, pfp.unitprice as pu, pfp.tva_tx as tva, pfp.remise_percent as remise from '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on p.rowid = pfp.fk_product';
+        $sql.= ' WHERE pfp.fk_soc = '.$supplierSocid.' AND p.tosell = 1 AND p.tobuy = 1';
+        $sql.= ' ORDER BY pfp.ref_fourn';
         $resql = $db->query($sql);
     
         $num = $db->num_rows($resql);
@@ -103,6 +106,7 @@ if ($user->hasRight('produit', 'creer')){
         $i = 0;
         while ($i < $num){
             $obj = $db->fetch_object($resql);
+            // print 'Id de la ligne : '.$obj->pfp_id;
             if (GETPOST('newprice-'.$obj->pfp_id, 'intcomma')){
                 $newprice = GETPOST('newprice-'.$obj->pfp_id, 'intcomma');
                 if (GETPOST('newdiscount-'.$obj->pfp_id, 'intcomma')){
@@ -110,10 +114,9 @@ if ($user->hasRight('produit', 'creer')){
                 } else {
                     $newdiscount = 0;
                 }
-                // print 'nouveau prix : '.$newprice.' et nouvelle remise : '.$newdiscount.'<br>';
+                print 'nouveau prix : '.$newprice.' et nouvelle remise : '.$newdiscount.'<br>';
                 $prodFourn->fetch($obj->prod_id);
-                $prodFourn->find_min_price_product_fournisseur($obj->prod_id);
-                $prodFourn->fetch_product_fournisseur_price($prodFourn->product_fourn_price_id);
+                $prodFourn->fetch_product_fournisseur_price($obj->pfp_id);
                 $soc->fetch($supplierSocid);
                 $res = $prodFourn->update_buyprice($obj->min_qty, $newprice, $user, $price_base_type, $soc, '', $obj->ref_fourn, $obj->tva, 0, $newdiscount);
             }
@@ -154,8 +157,8 @@ if ($user->hasRight('produit', 'creer')){
     print '<th>'.$langs->trans('Supplier').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('SupplierRef').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('MinQty').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';    
-    print '<th>'.$langs->trans('BuyingPrice').' '.$langs->trans('HT').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
-    print '<th>'.$langs->trans('BuyingPrice').' '.$langs->trans('TTC').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
+    print '<th>'.$langs->trans('BuyingPriceUnit').' '.$langs->trans('HT').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
+    print '<th>'.$langs->trans('BuyingPriceUnit').' '.$langs->trans('TTC').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('Discount').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('SellingPrice').' '.$langs->trans('HT').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('SellingPrice').' '.$langs->trans('TTC').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
@@ -168,8 +171,7 @@ if ($user->hasRight('produit', 'creer')){
         $obj = $db->fetch_object($resql);
         $prod->fetch($obj->prod_id);
         $prodFourn->fetch($obj->prod_id);
-        $prodFourn->find_min_price_product_fournisseur($obj->prod_id);
-        $prodFourn->fetch_product_fournisseur_price($prodFourn->product_fourn_price_id);
+        $prodFourn->fetch_product_fournisseur_price($obj->pfp_id);
         $prodFournPrice->fetch($obj->pfp_id);
         $soc->fetch($supplierSocid);
 
@@ -185,8 +187,8 @@ if ($user->hasRight('produit', 'creer')){
         print '<td class="nowrap">'.price2num($obj->remise).' %</td>';
         print '<td class="nowrap">'.price2num($prod->price).'</td>';
         print '<td class="nowrap">'.price2num($prod->price_ttc).'</td>';
-        print '<td class="nowrap"><input type="text" id="newprice" name="newprice-'.$prodFourn->product_fourn_price_id.'" value=""></td>';
-        print '<td class="nowrap"><input type="text" id="new_discount" name="newdiscount-'.$prodFourn->product_fourn_price_id.'" value=""></td>';
+        print '<td class="nowrap"><input type="text" id="newprice" name="newprice-'.$obj->pfp_id.'" value=""></td>';
+        print '<td class="nowrap"><input type="text" id="new_discount" name="newdiscount-'.$obj->pfp_id.'" value=""></td>';
 	
 
 
