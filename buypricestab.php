@@ -107,17 +107,20 @@ if ($user->hasRight('produit', 'creer')){
         while ($i < $num){
             $obj = $db->fetch_object($resql);
             // print 'Id de la ligne : '.$obj->pfp_id;
-            if (GETPOST('newprice-'.$obj->pfp_id, 'intcomma')){
-                $newprice = GETPOST('newprice-'.$obj->pfp_id, 'intcomma');
-                if (GETPOST('newdiscount-'.$obj->pfp_id, 'intcomma')){
-                    $newdiscount = GETPOST('newdiscount-'.$obj->pfp_id, 'intcomma');
-                } else {
-                    $newdiscount = 0;
+            // Get the new price if something is written in the input for the price
+            if (GETPOST('newprice-'.$obj->pfp_id, 'int') || GETPOST('newprice-'.$obj->pfp_id, 'intcomma')){
+                $newprice = GETPOST('newprice-'.$obj->pfp_id, 'int') ? GETPOST('newprice-'.$obj->pfp_id, 'int') : GETPOST('newprice-'.$obj->pfp_id, 'intcomma');
+                // Get the new discount if written
+                $newdiscount = 0;
+                if (GETPOST('newdiscount-'.$obj->pfp_id, 'int') || GETPOST('newdiscount-'.$obj->pfp_id, 'intcomma')){
+                    $newdiscount = GETPOST('newdiscount-'.$obj->pfp_id, 'int') ? GETPOST('newdiscount-'.$obj->pfp_id, 'int') : GETPOST('newdiscount-'.$obj->pfp_id, 'intcomma');
                 }
+
                 // print 'nouveau prix : '.$newprice.' et nouvelle remise : '.$newdiscount.'<br>';
                 $prodFourn->fetch($obj->prod_id);
                 $prodFourn->fetch_product_fournisseur_price($obj->pfp_id);
                 $soc->fetch($supplierSocid);
+                // Updating the price and discount with the collected data
                 $res = $prodFourn->update_buyprice($obj->min_qty, $newprice, $user, $price_base_type, $soc, '', $obj->ref_fourn, $obj->tva, 0, $newdiscount);
             }
             $i++;
