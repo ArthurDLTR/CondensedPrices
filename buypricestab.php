@@ -165,8 +165,8 @@ if ($user->hasRight('produit', 'creer')){
     print '<th>'.$langs->trans('Discount').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('SellingPrice').' '.$langs->trans('HT').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
     print '<th>'.$langs->trans('SellingPrice').' '.$langs->trans('TTC').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
-    print '<th>'.$langs->trans('NewBuyingPrice').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
-    print '<th>'.$langs->trans('NewDiscount').($num?'<span class="badge marginleftonlyshort">'.$num.'</span>':'').'</th>';
+    print '<th>'.$langs->trans('NewBuyingPrice').'</th>';
+    print '<th>'.$langs->trans('NewDiscount').'</th>';
     print '</tr>';
 
     $i = 0;
